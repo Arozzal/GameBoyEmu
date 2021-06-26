@@ -27,6 +27,16 @@ void Memory::init()
 	io->intF.intr = 0;
 	io->intE.intr = 0;
 	io->LCDGS.LCDGS = 0;
+
+	mbc.mode = 0;
+	mbc.rambank = 0;
+	mbc.ramon = 0;
+	mbc.rombank = 0;
+
+	romoffset = 0x4000;
+	ramoffset = 0x0000;
+
+	carttype = 0;
 }
 
 void Memory::loadBios(const std::string& filename)
@@ -57,6 +67,8 @@ void Memory::loadRom(const std::string & filename)
 	else {
 		std::cerr << "Memory: Unable to load Rom!" << std::endl;
 	}
+
+	carttype = rom[0x147];
 }
 
 Byte Memory::readByte(Word address)
@@ -77,9 +89,12 @@ Byte Memory::readByte(Word address)
 	case 0x1000:
 	case 0x2000:
 	case 0x3000:
-
-	case 0x4000: case 0x5000: case 0x6000: case 0x7000:
 		return rom[address];
+	case 0x4000: 
+	case 0x5000: 
+	case 0x6000: 
+	case 0x7000:
+		return rom[romoffset + (address & 0x3FFF)];
 	case 0x8000:
 	case 0x9000:
 		return gpu->vram[address - 0x8000];
@@ -87,7 +102,7 @@ Byte Memory::readByte(Word address)
 		break;
 	case 0xA000:
 	case 0xB000:
-		return eram[address - 0xA000];
+		return eram[ramoffset + (address & 0x1FFF)];
 		break;
 	case 0xC000:
 	case 0xD000:
@@ -183,10 +198,46 @@ void Memory::writeByte(Word address , Byte byte)
 		cpu->postLastCodes();*/
 
 	switch (address & 0xF000) {
-	case 0x0000: case 0x1000: case 0x2000:
-	case 0x3000: case 0x4000: case 0x5000:
-	case 0x6000: case 0x7000:
-		//__debugbreak();
+	case 0x0000: case 0x1000: 
+		mbc.ramon = ((byte & 0x0F) == 0x0A ? true : false);
+
+		break;
+	case 0x2000:
+	case 0x3000: 
+		mbc.rombank = (byte & 0x1F);
+		mbc.rombank = (mbc.rombank == 0 ? 1 : mbc.rombank);
+		romoffset = mbc.rombank * 0x4000;
+		break;
+	case 0x4000: 
+	case 0x5000:
+		switch (carttype) {
+		case 1:
+		case 2:
+		case 3:
+			if (mbc.mode == 1) {
+				mbc.rambank = byte & 3;
+				ramoffset =  mbc.rambank * 0x2000;
+			}
+			else {
+				mbc.rombank = (mbc.rombank & 0x1F) | ((byte & 3) << 5);
+				romoffset = mbc.rombank * 0x4000;
+			}
+			break;
+		}
+
+		break;
+	case 0x6000: 
+	case 0x7000:
+
+		switch (carttype) {
+		case 2:
+		case 3:
+			mbc.mode = byte & 1;
+			break;
+		default:
+			__debugbreak();
+			break;
+		}
 		break;
 	case 0x8000:
 	case 0x9000:
@@ -196,7 +247,7 @@ void Memory::writeByte(Word address , Byte byte)
 		break;
 	case 0xA000:
 	case 0xB000:
-		eram[address - 0xA000] = byte;
+		eram[ramoffset + (address & 0x1FFF)] = byte;
 		break;
 	case 0xC000:
 	case 0xD000:

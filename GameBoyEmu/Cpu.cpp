@@ -30,7 +30,6 @@ void Cpu::init()
 void Cpu::postOpCode(Word adress, Byte opcode)
 {
 
-
 	if (adress < 0xFFF) {
 		std::cout << 0;
 		if (adress < 0xFF) {
@@ -132,8 +131,6 @@ void Cpu::cycle()
 	switch (opcode) {
 	case 0x00:
 
-		if(reg->pc != 0x100)
-		postLastCodes();
 
 		reg->pc++;
 		t = 4;
@@ -486,6 +483,11 @@ void Cpu::cycle()
 		t = 8;
 		m = 2;
 		break;
+	case 0x3B:
+		reg->sp--;
+		reg->pc++;
+		t = 8;
+		m = 2;
 	case 0x3C:
 		INC(reg->A);
 		reg->pc++;
@@ -514,14 +516,32 @@ void Cpu::cycle()
 		t = 4;
 		m = 1;
 		break;
+	case 0x41:
+		reg->B = reg->C;
+		t = 4;
+		m = 1;
+		reg->pc++;
+		break;
 	case 0x42:
 		reg->B = reg->D;
 		reg->pc++;
 		t = 4;
 		m = 1;
 		break;
+	case 0x43:
+		reg->B = reg->E;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
 	case 0x44:
 		reg->B = reg->H;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x45:
+		reg->B = reg->L;
 		reg->pc++;
 		t = 4;
 		m = 1;
@@ -534,6 +554,36 @@ void Cpu::cycle()
 		break;
 	case 0x47:
 		reg->B = reg->A;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x48:
+		reg->C = reg->B;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x49:
+		reg->C = reg->C;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x4A:
+		reg->C = reg->D;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x4B:
+		reg->C = reg->E;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x4C:
+		reg->C = reg->H;
 		reg->pc++;
 		t = 4;
 		m = 1;
@@ -552,6 +602,30 @@ void Cpu::cycle()
 		break;
 	case 0x4F:
 		reg->C = reg->A;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x50:
+		reg->D = reg->B;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x51:
+		reg->D = reg->C;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x52:
+		reg->D = reg->D;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x53:
+		reg->D = reg->E;
 		reg->pc++;
 		t = 4;
 		m = 1;
@@ -582,6 +656,30 @@ void Cpu::cycle()
 		break;
 	case 0x58:
 		reg->E = reg->B;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x59:
+		reg->E = reg->C;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x5A:
+		reg->E = reg->D;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x5B:
+		reg->E = reg->E;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x5C:
+		reg->E = reg->H;
 		reg->pc++;
 		t = 4;
 		m = 1;
@@ -618,6 +716,12 @@ void Cpu::cycle()
 		break;
 	case 0x62:
 		reg->H = reg->D;
+		reg->pc++;
+		t = 4;
+		m = 1;
+		break;
+	case 0x63:
+		reg->H = reg->E;
 		reg->pc++;
 		t = 4;
 		m = 1;
@@ -832,6 +936,14 @@ void Cpu::cycle()
 		SBC(reg->C);
 		reg->pc++;
 		break;
+	case 0x9A:
+		SBC(reg->D);
+		reg->pc++;
+		break;
+	case 0x9B:
+		SBC(reg->E);
+		reg->pc++;
+		break;
 	case 0x9C:
 		SBC(reg->H);
 		reg->pc++;
@@ -910,6 +1022,12 @@ void Cpu::cycle()
 		OR(reg->L);
 		reg->pc++;
 		break;
+	case 0xB6:
+		OR(mem->readByte(reg->HL));
+		reg->pc++;
+		t = 8;
+		m = 2;
+		break;
 	case 0xB7:
 		OR(reg->A);
 		reg->pc++;
@@ -930,10 +1048,23 @@ void Cpu::cycle()
 		CP(reg->E);
 		reg->pc++;
 		break;
+	case 0xBC:
+		CP(reg->H);
+		reg->pc++;
+		break;
+	case 0xBD:
+		CP(reg->L);
+		reg->pc++;
+		break;
 	case 0xBE:
 		CP(mem->readByte(reg->HL));
 		reg->pc++;
 		t = 8;
+		m = 2;
+		break;
+	case 0xBF:
+		CP(reg->A);
+		reg->pc++;
 		break;
 	case 0xC0:
 		if (reg->FZ == false)
@@ -1196,7 +1327,7 @@ void Cpu::cycle()
 		m = 2;
 		break;
 	case 0xF3:
-		//make interupt disable!!!!
+		//interupt disable!!!!
 		mem->io->intEnabled = false;
 		reg->pc++;
 		reg->m = 1;
@@ -1224,7 +1355,7 @@ void Cpu::cycle()
 		break;
 	case 0xFB:
 		mem->io->intEnabled = true;
-		//make interupt enable!!!!
+		//interupt enable!!!!
 		reg->pc++;
 		reg->m = 1;
 		reg->t = 4;
@@ -1280,6 +1411,16 @@ void Cpu::cycleCB(Byte opcode)
 		RL(reg->E);
 		reg->pc++;
 		break;
+	case 0x16:
+		{
+		Byte temp = mem->readByte(reg->HL);
+		RL(temp);
+		mem->writeByte(reg->HL, temp);
+		reg->pc++;
+		t = 16;
+		m = 4;;
+		}
+		break;
 	case 0x18:
 		RR(reg->B);
 		reg->pc++;
@@ -1288,12 +1429,46 @@ void Cpu::cycleCB(Byte opcode)
 		RR(reg->C);
 		reg->pc++;
 		break;
+	case 0x1A:
+		RR(reg->D);
+		reg->pc++;
+		break;
+	case 0x1B:
+		RR(reg->E);
+		reg->pc++;
+		break;
+	case 0x21:
+		SLA(reg->C);
+		reg->pc++;
+		break;
 	case 0x23:
 		SLA(reg->E);
 		reg->pc++;
 		break;
+	case 0x26:
+		{
+		Byte temp = mem->readByte(reg->HL);
+		SLA(temp);
+		mem->writeByte(reg->HL, temp);
+		reg->pc++;
+		t = 16;
+		m = 4;
+		}
+		break;
 	case 0x27:
 		SLA(reg->A);
+		reg->pc++;
+		break;
+	case 0x2A:
+		SRA(reg->D);
+		reg->pc++;
+		break;
+	case 0x30:
+		SWAP(reg->B);
+		reg->pc++;
+		break;
+	case 0x31:
+		SWAP(reg->C);
 		reg->pc++;
 		break;
 	case 0x33:
@@ -1351,6 +1526,10 @@ void Cpu::cycleCB(Byte opcode)
 		reg->pc++;
 		t = 16;
 		m = 4;
+		break;
+	case 0x4F:
+		BIT(1, reg->A);
+		reg->pc++;
 		break;
 	case 0x50:
 		BIT(2, reg->B);
@@ -1480,6 +1659,10 @@ void Cpu::cycleCB(Byte opcode)
 		RES(3, reg->A);
 		reg->pc++;
 		break;
+	case 0xA7:
+		RES(4, reg->A);
+		reg->pc++;
+		break;
 	case 0xB6:
 		RESMEM(6, reg->HL);
 		reg->pc++;
@@ -1504,6 +1687,14 @@ void Cpu::cycleCB(Byte opcode)
 		break;
 	case 0xC6:
 		SETMEM(0, reg->HL);
+		reg->pc++;
+		break;
+	case 0xC7:
+		SET(0, reg->A);
+		reg->pc++;
+		break;
+	case 0xCF:
+		SET(1, reg->A);
 		reg->pc++;
 		break;
 	case 0xD0:
@@ -1555,9 +1746,9 @@ void Cpu::cycleCB(Byte opcode)
 	}
 }
 
-////////////////////
-//Assembly Methods//
-////////////////////
+//////////////////
+//OpCode Methods//
+//////////////////
 
 
 void Cpu::SWAP(Byte & byte)
@@ -1617,7 +1808,7 @@ void Cpu::SBC(Byte byte)
 	m += 1;
 }
 
-void Cpu::ADD(Byte  byte)
+void Cpu::ADD(Byte byte)
 {
 	reg->F = 0;
 
@@ -1868,6 +2059,21 @@ void Cpu::SRL(Byte & byte)
 {
 	//MSB not implemented!
 
+	reg->FC = (byte & 1);
+
+	byte >>= 1;
+
+	reg->FN = 0;
+	reg->FH = 0;
+
+	reg->FZ = (byte == 0 ? 1 : 0);
+
+	t += 8;
+	m += 2;
+}
+
+void Cpu::SRA(Byte& byte)
+{
 	reg->FC = (byte & 1);
 
 	byte >>= 1;

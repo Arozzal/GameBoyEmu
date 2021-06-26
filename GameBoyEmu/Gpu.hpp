@@ -16,10 +16,15 @@ public:
 		union {
 			Byte options;
 			struct {
-				bool above : 1;
-				bool YFlip : 1;
-				bool XFlip : 1;
+				bool nop1 : 1;
+				bool nop2 : 1;
+				bool nop3 : 1;
+				bool nop4 : 1;
+
 				bool palette : 1;
+				bool XFlip : 1;
+				bool YFlip : 1;
+				bool above : 1;
 			};
 		};
 	};

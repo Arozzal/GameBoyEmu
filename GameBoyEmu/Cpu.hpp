@@ -57,6 +57,7 @@ private:
 	void SETMEM(Byte num, Word address);
 	void BIT(Byte num, Byte byte);
 	void SRL(Byte& byte);
+	void SRA(Byte& byte);
 	void SLA(Byte& byte);
 	void DAA();
 	

@@ -5,7 +5,7 @@
 Gpu::Gpu() {
 	memset(pixels, 255, 144 * 160 * sizeof(Byte));
 	memset(tileset, 0, sizeof(tileset));
-	window = SDL_CreateWindow("derp", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 576, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("GB", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 576, SDL_WINDOW_SHOWN);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB332, SDL_TEXTUREACCESS_STATIC, 160, 144);
 	mode = 0;
@@ -77,10 +77,11 @@ void Gpu::renderScan()
 	Byte scanRow[160 * 145];
 	memset(scanRow, 0, sizeof(scanRow));
 
+
 	if (io->LCDG.bgOn){
 		Word offset = io->LCDG.bgTileMap ? 0x1C00 : 0x1800;
-
-		offset += ((io->scrollY + io->currentScanLine) >> 3) * 32;
+		//io->scrollX = 0x90;
+		offset += (((io->scrollY + io->currentScanLine) & 255 )>> 3) * 32;
 
 		Word y = (io->scrollY + io->currentScanLine) & 7;
 
@@ -88,7 +89,7 @@ void Gpu::renderScan()
 		Word lineoffset = (io->scrollX >> 3);
 
 		int tile = vram[offset + lineoffset];
-
+		Byte xval = io->scrollX & 0x7;
 
 		if (io->LCDG.bgTileSet == 0 && tile < 128)tile += 256;
 
@@ -97,22 +98,23 @@ void Gpu::renderScan()
 		for (int x = 0; x < 160;) {
 
 			
-			Byte temp = colors[0][tileset[tile][y][lineoffset]];
+			Byte temp = colors[0][tileset[tile][y][xval]];
 			pixels[dispos + x] = temp;
-			scanRow[dispos + x] = tileset[tile][y][lineoffset];
+			scanRow[dispos + x] = tileset[tile][y][xval];
 
 			x++;
-			lineoffset++;
+			xval++;
 
 
 			/*if (offset + (x >> 3) == 0x18a7)
 				int d = 0;*/
 
-			if (lineoffset == 8) {
-				tile = vram[offset + (x >> 3)];
+			if (xval == 8) {
+				lineoffset = (lineoffset + 1) & 31;
+				tile = vram[offset + lineoffset];
 
 				if (io->LCDG.bgTileSet == 0 && tile < 128)tile += 256;
-				lineoffset = 0;
+				xval = 0;
 			}
 
 		}
@@ -139,7 +141,7 @@ void Gpu::renderScan()
 				}
 				for (int x = 0; x < 8; x++) {
 					if ((spr.X + x) >= 0 && (spr.X + x) < 160 && sprRow[spr.XFlip ? (7 - x) : x] &&
-						(!spr.above || scanRow[spr.X + x])) {
+						(!spr.above || !scanRow[spr.X + x])) {
 
 						pixels[offset + x] = colors[palette][ sprRow[spr.XFlip ? (7 - x) : x] ];
 

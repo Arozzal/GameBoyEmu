@@ -8,11 +8,15 @@
 #include "Gpu.hpp"
 #include "Timer.hpp"
 
+
+
+
+
+
+
 int main(int argc, char *argv[]) {
 
 	SDL_Init(SDL_INIT_EVERYTHING);
-
-	
 	
 	IOMap Iomap;
 	Memory memory;
@@ -40,10 +44,8 @@ int main(int argc, char *argv[]) {
 	cpu.init();
 	memory.init();
 
-	
-
 	memory.loadBios("Bios.bin");
-	memory.loadRom("roms/Crystal Quest (U).gb");
+	memory.loadRom("roms/Super Mario Land (JUE) (V1.1) [!].gb");
 
 	while (true) {
 		cpu.cycle();

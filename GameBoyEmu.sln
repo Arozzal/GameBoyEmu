@@ -1,28 +1,43 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.3
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameBoyEmu", "GameBoyEmu\GameBoyEmu.vcxproj", "{0B967863-22E2-4692-B724-CB34AE0B5336}"
 EndProject
+Project("{A0786B88-2ADB-4C21-ABE8-AA2D79766269}") = "SnakeTest", "..\SnakeTest\SnakeTest\SnakeTest.phpproj", "{266B1F29-1FD2-4F18-8BCE-D3E1757971FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0B967863-22E2-4692-B724-CB34AE0B5336}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{0B967863-22E2-4692-B724-CB34AE0B5336}.Debug|x64.ActiveCfg = Debug|x64
 		{0B967863-22E2-4692-B724-CB34AE0B5336}.Debug|x64.Build.0 = Debug|x64
 		{0B967863-22E2-4692-B724-CB34AE0B5336}.Debug|x86.ActiveCfg = Debug|Win32
 		{0B967863-22E2-4692-B724-CB34AE0B5336}.Debug|x86.Build.0 = Debug|Win32
+		{0B967863-22E2-4692-B724-CB34AE0B5336}.Release|Any CPU.ActiveCfg = Release|Win32
 		{0B967863-22E2-4692-B724-CB34AE0B5336}.Release|x64.ActiveCfg = Release|x64
 		{0B967863-22E2-4692-B724-CB34AE0B5336}.Release|x64.Build.0 = Release|x64
 		{0B967863-22E2-4692-B724-CB34AE0B5336}.Release|x86.ActiveCfg = Release|Win32
 		{0B967863-22E2-4692-B724-CB34AE0B5336}.Release|x86.Build.0 = Release|Win32
+		{266B1F29-1FD2-4F18-8BCE-D3E1757971FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{266B1F29-1FD2-4F18-8BCE-D3E1757971FC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{266B1F29-1FD2-4F18-8BCE-D3E1757971FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{266B1F29-1FD2-4F18-8BCE-D3E1757971FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{266B1F29-1FD2-4F18-8BCE-D3E1757971FC}.Release|x64.ActiveCfg = Release|Any CPU
+		{266B1F29-1FD2-4F18-8BCE-D3E1757971FC}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {81E0DB4E-6BAC-4FE8-8B3C-5493BD540AD5}
 	EndGlobalSection
 EndGlobal

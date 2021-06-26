@@ -15,7 +15,7 @@ class Memory
 {
 	Byte bios[0x100];
 	Byte*  rom;
-	Byte eram[0x2000];
+	Byte eram[0x8000];
 	Byte wram[0x4000];
 	Byte zram[0x80];
 	
@@ -25,6 +25,18 @@ class Memory
 	IOMap* io;
 	Input* input;
 	Timer* timer;
+
+	struct MBC {
+		Byte rombank;
+		Byte rambank;
+		bool ramon;
+		Byte mode;
+	}mbc;
+
+	int romoffset;
+	int ramoffset;
+	Byte carttype;
+
 
 	bool biosActive = false;
 
